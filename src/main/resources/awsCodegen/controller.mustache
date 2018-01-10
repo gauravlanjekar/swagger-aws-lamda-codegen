@@ -1,0 +1,50 @@
+'use strict';
+
+const express = require('express');
+const fs = require('fs');
+const Promise = require('bluebird');
+const app = express();
+const {{classname}}Service = require('../service/{{classname}}Service');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.json());
+app.use(cors());
+
+function getUID() {
+  return `${(Date.now()).toString()}${Math.random()}`;
+}
+module.exports = () => {
+{{#operations}}
+{{#operation}}
+    {{#vendorExtensions}}{{^x-ignored}}
+      app.{{httpMethod}}('{{path}}', (req, res, next) => {
+        {{#bodyParams}}
+        const {{paramName}} = req.body;
+        {{/bodyParams}}
+        {{#queryParams}}
+        const {{paramName}} = req.query.{{paramName}};
+        {{/queryParams}}
+        {{#pathParams}}
+        const {{paramName}} = req.param.{{paramName}};
+        {{/pathParams}}
+        const requestId = (req.apiGateway && req.apiGateway.event.requestContext && req.apiGateway.event.requestContext.requestId) || getUID();
+
+        {{classname}}Service.{{nickname}}(requestId,{{#allParams}}{{paramName}}{{#hasMore}},{{/hasMore}}{{/allParams}})
+            .then((data) => {
+              res.json(data);
+            }).catch(next);
+
+      });
+    {{/x-ignored}}{{/vendorExtensions}}
+{{/operation}}
+{{/operations}}
+
+  app.use((err, req, res, next) => {
+    console.log(err, err.message, err.stack);
+    res.status(500);
+    res.json([{message: err.message}]);
+  });
+
+  return app;
+};

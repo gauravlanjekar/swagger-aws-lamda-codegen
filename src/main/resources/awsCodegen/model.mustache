@@ -1,0 +1,32 @@
+{{#models}}
+{{#model}}
+
+
+module.exports = {
+ {{#vars}}
+  {{name}}: {
+    type: {{{datatype}}},
+    {{#vendorExtensions}}{{#x-dynamo-hashkey}}hashKey:true,{{/x-dynamo-hashkey}}{{/vendorExtensions}}
+    {{#vendorExtensions}}{{#x-dynamo-hashkey}}rangeKey:true,{{/x-dynamo-hashkey}}{{/vendorExtensions}}
+    required: {{#required}}true{{/required}}{{^required}}false{{/required}},
+    {{#vendorExtensions}}{{#x-dynamo-index}}
+    index: {
+        {{#global}}
+        global: {{global}},
+        {{/global}}
+        {{#hashKey}}
+        hashKey: {{hashKey}},
+        {{/hashKey}}
+        {{#name}}
+        name: {{name}},
+        {{/name}}
+        {{#project}}
+        project: {{project}},
+        {{/project}}
+    }
+    {{/x-dynamo-index}}{{/vendorExtensions}}
+    },
+  {{/vars}}
+  };
+{{/model}}
+{{/models}}

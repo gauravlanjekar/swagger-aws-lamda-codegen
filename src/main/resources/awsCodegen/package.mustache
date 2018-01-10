@@ -1,0 +1,25 @@
+{
+  "name": "{{projectName}}",
+  "version": "{{appVersion}}",
+  "description": "{{{appDescription}}}",
+  "main": "index.js",
+  "scripts": {
+      "test": "NODE_ENV=test ./node_modules/.bin/mocha",
+      "start": "node server.js"
+  },
+  "keywords": [
+    "swagger"
+  ],
+  "license": "Unlicense",
+  "private": true,
+  "dependencies": {
+    "aws-serverless-express": "^3.0.2",
+    "body-parser": "^1.18.2",
+    "dotenv": "^4.0.0",
+    "dynamoose": "^0.8.6",
+    "express": "^4.16.2",
+    "cors": "^2.8.4",
+    "request-promise": "^4.2.2",
+    "request": "^2.83.0"
+  }
+}

@@ -1,0 +1,102 @@
+'use strict';
+{{#operations}}
+//import models
+{{#operation}}
+{{#vendorExtensions}}
+{{#x-aws-cruds-model-type}}
+const model = require('../models/dynamoose-wrapper.js').{{x-aws-cruds-model-type}};
+{{/x-aws-cruds-model-type}}
+{{/vendorExtensions}}
+{{/operation}}
+{{/operations}}
+
+{{#operations}}
+{{#operation}}
+    {{#vendorExtensions}}{{^x-ignored}}
+/**
+ {{#summary}}
+ * {{{summary}}}
+ {{/summary}}
+ {{#notes}}
+ * {{{notes}}}
+ {{/notes}}
+ *
+{{#allParams}}
+ * {{paramName}} {{{dataType}}} {{{description}}}{{^required}} (optional){{/required}}
+{{/allParams}}
+{{^returnType}}
+ * no response value expected for this operation
+{{/returnType}}
+{{#returnType}}
+ * returns {{{returnType}}}
+{{/returnType}}
+ **/
+
+exports.{{{nickname}}} = function({{#allParams}}{{paramName}}{{#hasMore}},{{/hasMore}}{{/allParams}}) {
+    {{#vendorExtensions}}
+    {{#x-aws-cruds-is-get}}
+        //This is a get method.
+        return new Promise(function(resolve, reject) {
+        {{#pathParams}}
+            {{#-first}}
+            //If this has a path parameter the path parameter is assumed to be an Id of the model.
+            model.get({id: {{paramName}} }).then(data => {
+              resolve(data);
+            })
+            {{/-first}}
+         {{/pathParams}}
+         {{#queryParams}}
+            {{#-first}}
+            //search
+            const scanObject = model.scan();
+            {{/-first}}
+         {{/queryParams}}
+         {{#queryParams}}
+            if ({{paramName}}) {
+              scanObject.where('{{paramName}}').contains({{paramName}});
+            }
+         {{/queryParams}}
+         {{#queryParams}}
+            {{#-first}}
+            scanObject.exec((err, items) => {
+              if (err) return reject(err);
+              console.log(items);
+              resolve(items);
+            });
+          });
+            {{/-first}}
+         {{/queryParams}}
+    {{/x-aws-cruds-is-get}}
+    {{/vendorExtensions}}
+    {{#vendorExtensions}}
+    {{#x-aws-cruds-is-put}}
+    Object.assign(model, {id: requestId});
+      console.log("model", model);
+      const obj = new {{classname}}(model);
+      return obj.save();
+    {{/x-aws-cruds-is-put}}
+    {{#x-aws-cruds-is-delete}}
+    Object.assign(model, {id: requestId});
+      console.log("model", model);
+      const obj = new {{classname}}(model);
+      return obj.save();
+    {{/x-aws-cruds-is-delete}}
+    {{#x-aws-cruds-is-post}}
+    {{#x-aws-cruds-model-type}}
+    abcd
+    {{/x-aws-cruds-model-type}}
+    Object.assign(model, {id: requestId});
+      console.log("model", model);
+      const obj = new (model);
+      return obj.save();
+    {{/x-aws-cruds-is-post}}
+    {{/vendorExtensions}}
+
+};
+{{/x-ignored}}{{/vendorExtensions}}
+{{/operation}}
+{{/operations}}
+
+
+
+

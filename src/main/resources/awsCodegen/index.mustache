@@ -1,0 +1,15 @@
+//@flow
+'use strict';
+/*::import type {APIGatewayEvent, Context, ProxyCallback} from 'flow-aws-lambda' */
+const awsServerlessExpress = require('aws-serverless-express');
+const services = require('./services');
+
+exports.handler = (event/*: APIGatewayEvent*/, context/*: Context*/, callback/*: ProxyCallback*/) => {
+  if (event.directInvocation) {
+    services[event.handler](event.params).then(result => callback(null, result)).catch(callback);
+    return;
+  }
+  const app = require('./api')(event, context);
+  const server = awsServerlessExpress.createServer(app);
+  awsServerlessExpress.proxy(server, event, context);
+};

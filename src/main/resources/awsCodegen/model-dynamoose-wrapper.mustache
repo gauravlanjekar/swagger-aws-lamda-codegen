@@ -1,0 +1,33 @@
+const dynamoose = require('dynamoose');
+if (process.env.NODE_ENV === 'test') {
+  dynamoose.AWS.config.update({
+    accessKeyId: 'AKID',
+    secretAccessKey: 'SECRET',
+    region: 'us-east-1'
+  });
+  dynamoose.local();
+}
+
+
+{{#models}}
+{{#model}}
+
+const {{name}}TableName = process.env.{{name}}_TABLE;
+const {{name}}Object = require('./interfaces/{{name}}_def');
+
+
+{{/model}}
+{{/models}}
+
+
+module.exports = {
+{{#models}}
+{{#model}}
+
+ {{name}} : dynamoose.model({{name}}TableName, {{name}}Object),
+
+{{/model}}
+{{/models}}
+
+
+}
